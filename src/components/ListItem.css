@@ -1,0 +1,7 @@
+.delete_button {
+  text-decoration: none;
+}
+
+.delete_button:hover {
+  color:red;
+}
