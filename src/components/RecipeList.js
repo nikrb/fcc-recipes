@@ -7,6 +7,8 @@ export default class RecipeList extends React.Component {
   state = {
     recipe_list: []
   };
+  // temp id before we save a recipe
+  sequence_id = 0;
   getRecipeList = () => {
     RecipeActions.getAll()
     .then( (results) => {
@@ -20,18 +22,33 @@ export default class RecipeList extends React.Component {
   componentWillMount = () => {
     this.getRecipeList();
   };
-  handleRecipeUpdateComplete = ( e) => {
-    console.log( "event:", e);
-    this.getRecipeList();
+  updateRecipe = ( recipe) => {
+    const test_id = `${recipe.id}`;
+    // if id starts with new_recipe let indexedDB set the id
+    if( test_id.indexOf( "new_recipe") === 0){
+      recipe.id = 0;
+    }
+    RecipeActions.updateRecipe( recipe)
+    .then( (result) => {
+      console.log( "update recipe:", result);
+      // find the recipe and update it
+      const nl = this.state.recipe_list.map( (r) => {
+        if( r.id === test_id){
+          return {...r, id: r.id};
+        }
+        return r;
+      });
+      this.setState( {recipe_list: nl});
+    });
   };
   newClick = (e) => {
-    const selectedRecipe = { created: new Date(), name:"", ingredients: [],
-      instructions: [], show: true};
+    const selectedRecipe = { id: "new_recipe"+this.sequence_id++, created: new Date(),
+      name:"", ingredients: [], instructions: [], show: true};
     this.setState( {recipe_list: [...this.state.recipe_list, selectedRecipe]});
   };
-  handleNameChange = ( new_name) => {
+  handleNameChange = ( id, new_name) => {
     const nl = this.state.recipe_list.map( ( recipe) => {
-      if( recipe.name === new_name){
+      if( recipe.id === id){
         return {...recipe, name: new_name};
       }
       return recipe;
@@ -40,7 +57,7 @@ export default class RecipeList extends React.Component {
   };
   listClicked = ( item_id) => {
     const nl = this.state.recipe_list.map( (recipe) => {
-      if( recipe.name === item_id){
+      if( recipe.id === item_id){
         return {...recipe, show:!recipe.show};
       }
       return recipe;
@@ -49,17 +66,16 @@ export default class RecipeList extends React.Component {
   };
   deleteClicked = (item_id) => {
     const newlist = this.state.recipe_list.filter( (recipe) => {
-      return recipe.name !== item_id;
+      return recipe.id !== item_id;
     });
     this.setState( { recipe_list: newlist});
     const sel = this.state.recipe_list.filter( (recipe) => {
-      return recipe.name === item_id;
+      return recipe.id === item_id;
     });
     console.log( "delete recipe:", sel[0]);
     RecipeActions.deleteRecipe( sel[0].id)
     .then( (res) => {
       console.log( "recipe deleted response:", res);
-      this.getRecipeList();
     });
   };
   render = () => {
@@ -77,15 +93,16 @@ export default class RecipeList extends React.Component {
         return (
           <div key={ndx} style={recipe_style}>
             <ListItem itemClicked={this.listClicked}
-              item_id={recipe.name} item_text={recipe.name} deleteClicked={this.deleteClicked} />
-            <Recipe recipe={recipe} nameChanged={this.handleNameChange} />
+              item_id={recipe.id} item_text={recipe.name} deleteClicked={this.deleteClicked} />
+            <Recipe recipe={recipe} nameChanged={this.handleNameChange}
+              updateRecipe={this.updateRecipe} />
           </div>
         );
       }
       return (
         <div key={ndx} style={recipe_style}>
           <ListItem itemClicked={this.listClicked}
-            item_id={recipe.name} item_text={recipe.name} deleteClicked={this.deleteClicked} />
+            item_id={recipe.id} item_text={recipe.name} deleteClicked={this.deleteClicked} />
         </div>
       );
     });
