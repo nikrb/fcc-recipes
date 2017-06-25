@@ -12,6 +12,7 @@ export default class ListItem extends React.Component {
   };
   render = () => {
     const style = {
+      cursor: "pointer",
       listStyleType: "none"
     };
     const delete_button_style={
