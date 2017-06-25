@@ -24,13 +24,16 @@ export default class Recipe extends React.Component {
     });
   };
   componentWillUnmount = () => {
-    const { id, name, created, ingredients, instructions} = this.state;
     if( this.dirty){
-      RecipeActions.updateRecipe( { id, name,created,ingredients,instructions })
-      .then( (result) => {
-        console.log( "update recipe (id):", result);
-      });
+      this.updateRecipe();
     }
+  };
+  updateRecipe = () => {
+    const { id, name, created, ingredients, instructions} = this.state;
+    RecipeActions.updateRecipe( { id, name,created,ingredients,instructions })
+    .then( (result) => {
+      console.log( "update recipe:", result);
+    });
   };
   ingredientChange = (e) => {
     this.setState( { ingredient_entry: e.target.value});
@@ -61,10 +64,14 @@ export default class Recipe extends React.Component {
   recipeNameChange = ( e) => {
     this.dirty = true;
     this.setState( { name: e.target.value});
+    this.props.nameChanged( e.target.value);
   };
   instructionChange = (e) => {
     this.dirty = true;
     this.setState( { instructions: e.target.value});
+  };
+  onSave = (e) => {
+    this.updateRecipe();
   };
   render = () => {
     const ingredients = this.state.ingredients.map( ( ing, ndx) => {
@@ -73,28 +80,50 @@ export default class Recipe extends React.Component {
           item_id={ing.text} item_text={ing.text} deleteClicked={this.deleteClicked} />
       );
     });
-    const ta_style = { width: "40em", height: "10em"};
+    let scrolly_box = {
+      maxHeight: "100px",
+      marginBottom: "10px"
+    };
+    if( this.state.ingredients.length > 4){
+      scrolly_box.overflowY = "scroll";
+    }
+    const name_style = {
+      width: "90%",
+      marginBottom: "5px"
+    };
+    const ta_style = { width: "380px", height: "10em"};
     return (
       <div>
         <div>
           <h2>{this.props.item_text}</h2>
         </div>
         <div>
-          <input type="text" value={this.state.name} placeholder="recipe name ..."
+          Name
+          <input type="text" style={name_style} value={this.state.name}
+            placeholder="Recipe name ..."
             onChange={this.recipeNameChange} />
         </div>
         <div>
-          <input type="text" value={this.state.ingredient_entry}
-            placeholder="Ingredient..." onChange={this.ingredientChange}
-            onKeyUp={this.handleKeyUp}/>
+          Ingredients
+          <div>
+            <div>
+              <input type="text" value={this.state.ingredient_entry}
+                placeholder="Enter Ingredient..." onChange={this.ingredientChange}
+                onKeyUp={this.handleKeyUp}/>
+            </div>
+            <div style={scrolly_box}>
+              <ul>{ingredients}</ul>
+            </div>
+          </div>
         </div>
         <div>
-          <ul>{ingredients}</ul>
-        </div>
-        <div>
+          Instructions
           <textarea style={ta_style} rows={8} cols={30}
             onChange={this.instructionChange} value={this.state.instructions}>
           </textarea>
+        </div>
+        <div>
+          <button onClick={this.onSave} >Save</button>
         </div>
       </div>
     );

@@ -11,9 +11,17 @@ export default class ListItem extends React.Component {
     this.props.deleteClicked( this.props.item_id);
   };
   render = () => {
+    const style = {
+      listStyleType: "none"
+    };
+    const delete_button_style={
+      textDecoration: "none",
+      marginRight: "10px"
+    };
     return (
-      <li onClick={this.handleClick} >
-        <a href='' onClick={this.deleteClicked} className="delete_button">
+      <li onClick={this.handleClick} style={style}>
+        <a href='' style={delete_button_style} className="delete_button"
+          onClick={this.deleteClicked} >
           <span role="img" aria-label="delete">&#10060;</span>
         </a>
         {this.props.item_text}

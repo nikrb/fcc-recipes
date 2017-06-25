@@ -5,7 +5,8 @@ import RecipeActions from './RecipeActions';
 
 export default class RecipeList extends React.Component {
   state = {
-    recipe_list: []
+    recipe_list: [],
+    recipe_changed: false
   };
   selectedRecipe = null;
   getRecipeList = () => {
@@ -34,12 +35,17 @@ export default class RecipeList extends React.Component {
       instructions: [], show: true};
     this.setState( {recipe_list: [...this.state.recipe_list, this.selectedRecipe]});
   };
+  handleNameChange = ( new_name) => {
+    this.selectedRecipe.name = new_name;
+    this.setState( { recipe_changed: !this.state.recipe_changed});
+  };
   listClicked = ( item_id) => {
     this.selectedRecipe = this.state.recipe_list.find( ( recipe) => {
       return recipe.name === item_id;
     });
     // TODO: expand selected recipe
-
+    this.selectedRecipe.show = !this.selectedRecipe.show;
+    this.setState( {recipe_changed: !this.state.recipe_changed});
   };
   deleteClicked = (item_id) => {
     const newlist = this.state.recipe_list.filter( (recipe) => {
@@ -57,19 +63,28 @@ export default class RecipeList extends React.Component {
     });
   };
   render = () => {
+    const recipe_style = {
+      width: "400px",
+      padding: "10px",
+      backgroundColor: "cornflowerblue",
+      borderRadius: "10px"
+    };
+    const leftit = {
+      paddingLeft: "0"
+    };
     const recipe_list = this.state.recipe_list.map( ( recipe, ndx) => {
       if( recipe.show){
         return (
-          <div key={ndx}>
+          <div key={ndx} style={recipe_style}>
             <ListItem itemClicked={this.listClicked}
               item_id={recipe.name} item_text={recipe.name} deleteClicked={this.deleteClicked} />
-            <Recipe recipe={recipe} />
+            <Recipe recipe={recipe} nameChanged={this.handleNameChange} />
           </div>
         );
       }
       return (
-        <div>
-          <ListItem key={ndx} itemClicked={this.listClicked}
+        <div key={ndx} style={recipe_style}>
+          <ListItem itemClicked={this.listClicked}
             item_id={recipe.name} item_text={recipe.name} deleteClicked={this.deleteClicked} />
         </div>
       );
@@ -80,7 +95,7 @@ export default class RecipeList extends React.Component {
           <button type="button" onClick={this.newClick}>New</button>
         </div>
         <div>
-          <ul>
+          <ul style={leftit}>
             {recipe_list}
           </ul>
         </div>
