@@ -22,7 +22,7 @@ export default class ListItem extends React.Component {
     return (
       <li onClick={this.handleClick} style={style}>
         <a href='' style={delete_button_style} className="delete_button"
-          onClick={this.deleteClicked} >
+          onClick={this.deleteClicked} title={this.props.tooltip} >
           <span role="img" aria-label="delete">&#10060;</span>
         </a>
         {this.props.item_text}

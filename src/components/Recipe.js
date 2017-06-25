@@ -68,7 +68,7 @@ export default class Recipe extends React.Component {
   render = () => {
     const ingredients = this.state.ingredients.map( ( ing, ndx) => {
       return (
-        <ListItem key={ndx}  itemClicked={this.listClicked}
+        <ListItem key={ndx}  itemClicked={this.listClicked} tooltip="Delete ingredient"
           item_id={ing.text} item_text={ing.text} deleteClicked={this.deleteClicked} />
       );
     });

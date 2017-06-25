@@ -92,7 +92,7 @@ export default class RecipeList extends React.Component {
       if( recipe.show){
         return (
           <div key={ndx} style={recipe_style}>
-            <ListItem itemClicked={this.listClicked}
+            <ListItem itemClicked={this.listClicked} tooltip="Delete recipe"
               item_id={recipe.id} item_text={recipe.name} deleteClicked={this.deleteClicked} />
             <Recipe recipe={recipe} nameChanged={this.handleNameChange}
               updateRecipe={this.updateRecipe} />
@@ -101,7 +101,7 @@ export default class RecipeList extends React.Component {
       }
       return (
         <div key={ndx} style={recipe_style}>
-          <ListItem itemClicked={this.listClicked}
+          <ListItem itemClicked={this.listClicked} tooltip="Delete recipe"
             item_id={recipe.id} item_text={recipe.name} deleteClicked={this.deleteClicked} />
         </div>
       );
