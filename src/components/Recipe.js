@@ -1,6 +1,5 @@
 import React from 'react';
 import ListItem from './ListItem';
-import RecipeActions from './RecipeActions';
 
 export default class Recipe extends React.Component {
   state = {
@@ -14,7 +13,7 @@ export default class Recipe extends React.Component {
   componentWillMount = () => {
     console.log( "Recipe mount:", this.props.recipe);
     const { id, name, created, ingredients, instructions} = this.props.recipe;
-    // FIXME: I think we can remove the duplication
+    // FIXME: I think we can remove the duplication - just use props.recipe?
     this.setState( {
       id: id,
       name: name,
@@ -23,17 +22,10 @@ export default class Recipe extends React.Component {
       instructions: instructions
     });
   };
-  componentWillUnmount = () => {
-    if( this.dirty){
-      this.updateRecipe();
-    }
-  };
   updateRecipe = () => {
-    const { id, name, created, ingredients, instructions} = this.state;
-    RecipeActions.updateRecipe( { id, name,created,ingredients,instructions })
-    .then( (result) => {
-      console.log( "update recipe:", result);
-    });
+    if( this.dirty){
+      this.props.updateRecipe( this.state);
+    }
   };
   ingredientChange = (e) => {
     this.setState( { ingredient_entry: e.target.value});
@@ -64,7 +56,7 @@ export default class Recipe extends React.Component {
   recipeNameChange = ( e) => {
     this.dirty = true;
     this.setState( { name: e.target.value});
-    this.props.nameChanged( e.target.value);
+    this.props.nameChanged( this.state.id, e.target.value);
   };
   instructionChange = (e) => {
     this.dirty = true;
@@ -91,7 +83,7 @@ export default class Recipe extends React.Component {
       width: "90%",
       marginBottom: "5px"
     };
-    const ta_style = { width: "380px", height: "10em"};
+    const ta_style = { width: "380px", height: "10em", marginTop: "5px"};
     return (
       <div>
         <div>
