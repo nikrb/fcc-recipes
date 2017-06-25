@@ -15,14 +15,12 @@ const updateRecipe = ( recipe) => {
     const { created, name, ingredients, instructions} = recipe;
     ret = db.recipes.add( { created, name, ingredients, instructions})
       .then( (res) => {
-        dispatchEvent( new CustomEvent( "recipe_update_complete"));
         // return the new objecct id for processing
         return res;
       });
   } else {
     ret = db.recipes.update( recipe.id, recipe)
     .then( (res) => {
-      dispatchEvent( new CustomEvent( "recipe_update_complete"));
       return 0;
     });
   }
