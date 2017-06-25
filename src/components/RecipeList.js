@@ -5,10 +5,8 @@ import RecipeActions from './RecipeActions';
 
 export default class RecipeList extends React.Component {
   state = {
-    recipe_list: [],
-    recipe_changed: false
+    recipe_list: []
   };
-  selectedRecipe = null;
   getRecipeList = () => {
     RecipeActions.getAll()
     .then( (results) => {
@@ -21,31 +19,33 @@ export default class RecipeList extends React.Component {
   };
   componentWillMount = () => {
     this.getRecipeList();
-    window.addEventListener( "recipe_update_complete", this.handleRecipeUpdateComplete);
-  };
-  componentWillUnmount = () => {
-    window.removeEventListener( "recipe_update_complete", this.handleRecipeUpdateComplete);
   };
   handleRecipeUpdateComplete = ( e) => {
     console.log( "event:", e);
     this.getRecipeList();
   };
   newClick = (e) => {
-    this.selectedRecipe = { created: new Date(), name:"", ingredients: [],
+    const selectedRecipe = { created: new Date(), name:"", ingredients: [],
       instructions: [], show: true};
-    this.setState( {recipe_list: [...this.state.recipe_list, this.selectedRecipe]});
+    this.setState( {recipe_list: [...this.state.recipe_list, selectedRecipe]});
   };
   handleNameChange = ( new_name) => {
-    this.selectedRecipe.name = new_name;
-    this.setState( { recipe_changed: !this.state.recipe_changed});
+    const nl = this.state.recipe_list.map( ( recipe) => {
+      if( recipe.name === new_name){
+        return {...recipe, name: new_name};
+      }
+      return recipe;
+    });
+    this.setState( { recipe_list: nl});
   };
   listClicked = ( item_id) => {
-    this.selectedRecipe = this.state.recipe_list.find( ( recipe) => {
-      return recipe.name === item_id;
+    const nl = this.state.recipe_list.map( (recipe) => {
+      if( recipe.name === item_id){
+        return {...recipe, show:!recipe.show};
+      }
+      return recipe;
     });
-    // TODO: expand selected recipe
-    this.selectedRecipe.show = !this.selectedRecipe.show;
-    this.setState( {recipe_changed: !this.state.recipe_changed});
+    this.setState( {recipe_list: nl});
   };
   deleteClicked = (item_id) => {
     const newlist = this.state.recipe_list.filter( (recipe) => {
