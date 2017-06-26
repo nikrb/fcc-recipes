@@ -6,6 +6,12 @@ class App extends Component {
   state = {
     font_size: 12
   };
+  componentWillMount = () => {
+    const fs = localStorage.getItem( 'font_size');
+    if( fs){
+      this.setState( {font_size: parseInt( fs, 10)});
+    }
+  };
   smallerFont = () => {
     localStorage.setItem( 'font_size', this.state.font_size-1);
     this.setState( { font_size: this.state.font_size - 1});
