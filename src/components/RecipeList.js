@@ -30,11 +30,15 @@ export default class RecipeList extends React.Component {
     }
     RecipeActions.updateRecipe( recipe)
     .then( (result) => {
+      // result is zero for update, id for new
       console.log( "update recipe:", result);
       // find the recipe and update it
+      // a new recipe won't have a proper mongo id (recipe) so look for name
       const nl = this.state.recipe_list.map( (r) => {
-        if( r.id === test_id){
-          return {...r, id: r.id};
+        // set a new id and show flag (or it will be undefined)
+        // r.id will be new_recipeN for new recipes
+        if(  r.id === test_id || ( result === 0 && r.id === recipe.id)){
+          return {...recipe, id: result?result:r.id, show: true};
         }
         return r;
       });
