@@ -20,8 +20,13 @@ button:focus {
 }
 
 input {
+  font-size: inherit;
   padding: 2px;
   margin: 5px 0;
   line-height: 1.5em;
   border-radius: 5px;
+}
+
+textarea {
+  font-size: inherit;
 }

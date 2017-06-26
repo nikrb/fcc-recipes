@@ -83,7 +83,7 @@ export default class Recipe extends React.Component {
       width: "90%",
       marginBottom: "5px"
     };
-    const ta_style = { width: "380px", height: "10em", marginTop: "5px"};
+    const ta_style = { width: "380px", height: "10em", marginTop: "5px", fontSize:"1.4em"};
     return (
       <div>
         <div>
